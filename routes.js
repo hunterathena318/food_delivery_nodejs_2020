@@ -1,6 +1,11 @@
 const express = require("express");
 const Post = require("./models/Post");
+const Food = require("./models/Food")
 const router = express.Router();
+const handleError = require("./common/handleError")
+const { register, login, logout } = require("./api/controller/UserControllers")
+const { UserValidator } = require("./api/validates/auth")
+const {requiresLogout, requiresLogin}  = require("./common/checkSession")
 
 router.get("/posts", async (req, res) => {
   const posts = await Post.find();
@@ -9,14 +14,14 @@ router.get("/posts", async (req, res) => {
 
 router.post("/posts", async (req, res) => {
   const post = new Post({
-    title: req.body.title,
-    content: req.body.content
+    title: req.body.title , 
+    content: req.body.content 
   });
   await post.save();
   res.send(post);
 });
 
-router.get("/posts/:id", async (req, res) => {
+router.get("/posts/:id", async (req, res) => { 
   try {
     const post = await Post.findOne({ _id: req.params.id });
     res.send(post);
@@ -55,5 +60,15 @@ router.delete("/posts/:id", async (req, res) => {
     res.send({ error: "Post doesn't exist!" });
   }
 });
+
+router.get("/foods", async (req, res) => {
+  const foods = await Food.find();
+  res.send(foods);
+});
+
+//auth
+router.post('/register', UserValidator, register)
+router.post('/login', requiresLogout, login)
+router.post('/logout', requiresLogin, logout)
 
 module.exports = router;
