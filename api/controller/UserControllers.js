@@ -1,6 +1,7 @@
 const User = require("../../models/User")
 const bcrypt = require("bcrypt")
 const { body } = require("express-validator")
+const jwt = require("jsonwebtoken")
 
 exports.register = function(req, res, next){    
     User.findOne({email: req.body.email}, (err, user) => {
@@ -27,10 +28,12 @@ exports.login = async function(req,res) {
       const user = await User.findOne({email: req.body.email})
       bcrypt.compare(req.body.password, user.password, (err, result) => {
           if (result === true ) {
+              const token = jwt.sign({ email: user.email, username: user.username, _id: user._id}, process.env.JWT_KEY)                     
               req.session.user = user
               res.json({
                   user: user,
-                  "message": "login success"    
+                  "message": "login success",
+                  token: token
               })
           } else {
               return res.json({err: "email or password are incorrect"})
@@ -47,6 +50,16 @@ exports.logout = async function(req, res) {
         req.session.destroy(() => {
             res.json({'logout': "success"})
         }) 
+    } catch (error) {
+        res.status(400)
+        res.json(error)
+    }
+}
+
+exports.profile = async function(req, res) {
+    try {
+        const profile = await User.findOne({_id: req.params.id})
+        res.json({data: profile})
     } catch (error) {
         res.status(400)
         res.json(error)
