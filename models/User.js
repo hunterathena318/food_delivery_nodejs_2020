@@ -20,6 +20,32 @@ const UserSchema = new mongose.Schema({
     password_confirm : {
         type: String,
         required: true,
+    },
+    orders: [
+        {
+            type: mongose.Schema.Types.ObjectId,
+            ref: "Order"
+        }
+    ],
+    position: [
+        {
+          address: {
+            type: String,
+            required: true
+          },
+          lat: {
+            type: Number,
+            required: true
+          },
+          long: {
+            type: Number,
+            required: true
+          }
+        }
+      ],
+    numNotification: {
+        type: Number,
+        default: 0
     }
 })
 

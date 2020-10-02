@@ -2,6 +2,18 @@ const User = require("../../models/User")
 const bcrypt = require("bcrypt")
 const { body } = require("express-validator")
 const jwt = require("jsonwebtoken")
+const { generateToken } = require("../../common/middleware/auth")
+const router = require("../../routes")
+const { use } = require("../../routes")
+
+
+const refreshTokens = []
+
+/**
+ * controller login
+ * @param {*} req 
+ * @param {*} res 
+ */
 
 exports.register = function(req, res, next){    
     User.findOne({email: req.body.email}, (err, user) => {
@@ -28,12 +40,13 @@ exports.login = async function(req,res) {
       const user = await User.findOne({email: req.body.email})
       bcrypt.compare(req.body.password, user.password, (err, result) => {
           if (result === true ) {
-              const token = jwt.sign({ email: user.email, username: user.username, _id: user._id}, process.env.JWT_KEY)                     
+              const token = generateToken(user)
+              const refreshToken = jwt.sign({ username: user.username, role: user.role }, process.env.refreshTokenSecret)    
+              refreshTokens.push(refreshToken)        
               req.session.user = user
               res.json({
-                  user: user,
-                  "message": "login success",
-                  token: token
+                 token,
+                 refreshToken
               })
           } else {
               return res.json({err: "email or password are incorrect"})
@@ -45,7 +58,7 @@ exports.login = async function(req,res) {
   }
 }
 
-exports.logout = async function(req, res) {
+exports.logout = async function(req, res) { 
     try {
         req.session.destroy(() => {
             res.json({'logout': "success"})
@@ -64,4 +77,39 @@ exports.profile = async function(req, res) {
         res.status(400)
         res.json(error)
     }
+}
+
+exports.getallusers = async function(req, res) {
+    try {
+        const users = await User.find()
+        console.log(users)
+        res.json({data: users})
+    } catch (error) {
+        res.status(400)
+        res.json(error)
+    }
+}
+
+exports.token  = (req, res) => {
+    const { token } = req.body;
+
+    if (!token) {
+        return res.sendStatus(401);
+    }
+
+    if (!refreshTokens.includes(token)) {
+        return res.sendStatus(403);
+    }
+
+    jwt.verify(token, process.env.refreshTokenSecret, (err, user) => {
+        if (err) {
+            return res.sendStatus(403);
+        }
+
+        const accessToken = generateToken(user)
+
+        res.json({
+            accessToken
+        });
+    });
 }

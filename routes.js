@@ -3,10 +3,10 @@ const Post = require("./models/Post");
 const Food = require("./models/Food")
 const router = express.Router();
 const handleError = require("./common/handleError")
-const { register, login, logout, profile } = require("./api/controller/UserControllers")
-const { UserValidator } = require("./api/validates/auth")
+const { register, login, logout, profile, token, getallusers } = require("./api/controller/UserControllers")
+const { UserValidator } = require("./common/validates/auth")
 const {requiresLogout, requiresLogin}  = require("./common/checkSession")
-const auth = require("./common/middleware/auth")
+const { auth } = require("./common/middleware/auth")
 
 router.get("/posts", async (req, res) => {
   const posts = await Post.find();
@@ -72,5 +72,7 @@ router.post('/register', UserValidator, register)
 router.post('/login', requiresLogout, login)
 router.post('/logout', requiresLogin, logout)
 router.get('/get-profile/:id', auth, profile)
+router.get('/get-all-users', auth, getallusers)
+router.post('/token', token)
 
 module.exports = router;
