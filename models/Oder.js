@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema
 
 const OderSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: "User"
-  },
   items: [
     {
       food: {
@@ -33,9 +29,18 @@ const OderSchema = new Schema({
       type: Number
     } 
   },
+  status: {
+    type: String,
+    enum: ['pending', 'accepted', 'delivering', 'completed', 'cancelled'],
+    default: 'pending'
+  },
   restaurant: {
     type: Schema.Types.ObjectId,
     ref: "Restaurant"
+  },
+  review: {
+    star: Number,
+    description: String,
   }
   
 

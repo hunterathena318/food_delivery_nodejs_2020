@@ -11,17 +11,28 @@ module.exports = {
                     ...dishType._doc
                 }
             })
-        }
+        },
+        menuByRestaurant: async (_, { restaurantId }) => {
+            const menu = await DishType.find({ restaurant: restaurantId });
+            return menu.map(item => {
+              return {
+                ...item._doc,
+                _id: item.id
+              }
+            })
+          }
     },
     Mutation: {
         createDishType: async (_,{dishTypeInput}) => {
-            const resId = await Restaurant.findById(dishTypeInput.restaurant).exec()
-            if(!resId) throw new Error("Restaurant is not exist")
+            const restaurant = await Restaurant.findById(dishTypeInput.restaurant).exec()
+            if(!restaurant) throw new Error("Restaurant is not exist")
             const newDishType = new DishType({
                 ...dishTypeInput
             })
 
             await newDishType.save()
+            restaurant.menuInfo.push(newDishType)
+            restaurant.save()
             return {
                 ...newDishType._doc,
                 id: newDishType._id

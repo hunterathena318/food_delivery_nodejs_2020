@@ -108,7 +108,7 @@ mongoose.connection.on("connected", (err, res) => {
   })
   console.log("mongoose is connected")
 })
-const PORT = 3000
-app.listen(PORT, () => {
+const PORT = 8080
+app.listen(PORT, () => {  
   console.log(`app is listening to PORT ${PORT}`)
 })

@@ -12,9 +12,16 @@ const schema = new mongoose.Schema({
   },
   img_uri: {type: String},
   price: {
-    type: Number, 
-    required: true
-  }, 
+    unit: {
+      type: String,
+      required: true,
+      enum: ['đ','USD']
+    },
+    value: {
+      type: Number,
+      required: true
+    }
+  },
   restaurant: {
     type: Schema.Types.ObjectId,
     ref: 'Restaurant'

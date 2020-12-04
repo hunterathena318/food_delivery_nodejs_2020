@@ -32,7 +32,7 @@ const SchemaRes = new Schema({
             ref: "DishType"
         }
     ],
-    numOrder: {
+    numOrders: {
         type: Number,
         default: 0
     }

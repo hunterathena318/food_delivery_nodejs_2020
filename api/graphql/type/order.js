@@ -11,8 +11,15 @@ module.exports = `
         food: Food!
         qty: Int!
     }
+    type Query {
+        orders: [Order!]
+        orderByRestaurant(restaurantId: ID!): [Order!]
+        orderByUser(userId: ID!): [Order!]
+        orderById(orderId: ID!): Order!
+    }
     type Mutation {
         createOrders(inputOrder: InputOrder!): Order!
+        updateOrder(orderId: ID!, status: String!): Order!
     }
     input ItemInput {
         qty: Int!
@@ -26,3 +33,5 @@ module.exports = `
         restaurant: ID!
     }
 `
+
+

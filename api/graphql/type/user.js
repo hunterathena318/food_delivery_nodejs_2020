@@ -2,8 +2,12 @@ module.exports = `
     type User {
         id: ID!,
         email: String!,
-        username: String!,
-        password: String!
+        fName: String!,
+        lName: String!,
+        phone: String!,
+        orders: [Order!],
+        numNotifications: Int!,
+        position: [Position!]
     }
     type Authdata {
         id: ID!,
@@ -15,8 +19,8 @@ module.exports = `
         userById(id: ID!): User!
     }
     type Mutation {
-        createUser(user: userInput!): User!
-        login(userInput: loginInput!): Authdata!
+        createUser(userInput: userInput!): User!
+        login(loginInput: LoginInput!): Authdata!
     }
     type Position{
         _id: ID!
@@ -29,11 +33,12 @@ module.exports = `
     input userInput {
         email: String!,
         username: String!,
+        phone: String!,
         password: String!,
         password_confirm: String!
     }
 
-    input loginInput {
+    input LoginInput {
         email: String!,
         password: String!
     }

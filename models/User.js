@@ -5,9 +5,13 @@ const UserSchema = new mongose.Schema({
         type: String,
         required: true,
     },
-    username: {
+    fName: {
         type: String, 
         required: true, 
+    },
+    lName: {
+      type: String, 
+      required: true, 
     },
     role: {
         type: String,
@@ -27,6 +31,10 @@ const UserSchema = new mongose.Schema({
             ref: "Order"
         }
     ],
+    phone: {
+      type: String,
+      required: true
+    },
     position: [
         {
           address: {
@@ -43,7 +51,7 @@ const UserSchema = new mongose.Schema({
           }
         }
       ],
-    numNotification: {
+    numNotifications: {
         type: Number,
         default: 0
     }

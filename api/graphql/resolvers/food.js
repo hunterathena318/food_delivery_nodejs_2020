@@ -26,19 +26,24 @@ module.exports =  {
                 throw error
             }
         },
-        createOd: (_,{input}) => {
-           return input
-        }
     },
     Query: {
-        foodsByRestaurant: async () => {
+        foods: async () => {
             try {
                 const foods = await Food.find().exec()
-                return foods.map(food => {
-                    return {
-                        ...food._doc
-                    }
-                })
+                
+                console.log(foods)
+                return foods
+            } catch (error) {
+                throw error
+            }
+        },
+        foodsByRestaurant: async (_,{ restaurantId }) => {
+            try {
+                const foods = await Food.find({restaurant: restaurantId}).exec()
+                console.log(foods)
+                return foods
+                
             } catch (error) {
                 throw error
             }

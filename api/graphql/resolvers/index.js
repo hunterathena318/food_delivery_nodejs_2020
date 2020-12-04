@@ -5,6 +5,8 @@ const MerchantResolver = require("./merchant")
 const RestaurantResolver = require("./restaurant")
 const DishTypeResolver = require("./dishType")
 const OrderResolver = require("./order")
+const NotificationOrder = require("./notificationOrder")
+const DeviceResolver = require("./device")
 
 const resolvers = [
     FoodResolver,
@@ -12,6 +14,8 @@ const resolvers = [
     MerchantResolver,
     RestaurantResolver,
     DishTypeResolver,
-    OrderResolver
+    OrderResolver,
+    NotificationOrder,
+    DeviceResolver
 ]
 module.exports = mergeResolvers(resolvers)

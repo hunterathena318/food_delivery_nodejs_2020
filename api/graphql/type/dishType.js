@@ -8,6 +8,7 @@ module.exports = `
 
     type Query {
         getAllDishType: [DishType]!
+        menuByRestaurant(restaurantId: ID!): [DishType]!
     }
     type Mutation {
         createDishType(dishTypeInput: dishTypeInput!): DishType!

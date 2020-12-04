@@ -14,6 +14,8 @@ module.exports = {
             await newMerchant.save()
             return {
                 ...newMerchant._doc,
+
+                
                 id: newMerchant._id
             }
         }

@@ -12,7 +12,7 @@ module.exports =  `
     
     type Query {
         foods: [Food],
-        foodsByRestaurant: Food!
+        foodsByRestaurant(restaurantId: ID!): [Food]!
     }
 
     type Mutation {
