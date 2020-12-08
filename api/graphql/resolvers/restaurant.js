@@ -145,7 +145,7 @@ module.exports = {
       })
       await Merchant.findByIdAndUpdate(
           inputRestaurant.merchant,
-          {$set: {createRestaurant: newRestaunrant } }
+          {$set: {createdRestaurants: newRestaunrant } }
       )
       
       await newRestaunrant.save()

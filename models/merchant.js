@@ -2,7 +2,15 @@ const mongoose = require("mongoose")
 const Schema = mongoose.Schema
 
 const schemaMerchant = new Schema({
-    fname: {
+    fName: {
+        type: String,
+        required: true
+    },
+    lName: {
+        type: String,
+        required: true
+    },
+    phone: {
         type: String,
         required: true
     },
@@ -14,7 +22,7 @@ const schemaMerchant = new Schema({
         type: String,
         required: true
     },
-    createRestaurant: {
+    createdRestaurants: {
         type: Schema.Types.ObjectId,
         ref: "Restaurant"
     }
