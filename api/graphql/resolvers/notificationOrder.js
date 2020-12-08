@@ -14,7 +14,7 @@ module.exports = {
         return notifications.map(item => {
           return {
             ...item._doc,
-            _id: item.id,
+            _id: item._id,
             createdAt: dateToString(item._doc.createdAt)
           };
         });
@@ -31,7 +31,7 @@ module.exports = {
         return notifications.map(item => {
           return {
             ...item._doc,
-            _id: item.id
+            _id: item._id
           };
         });
       } catch (error) {
@@ -57,7 +57,7 @@ module.exports = {
         const noticeHasDelete = await NotificationOrder.findByIdAndDelete(notificationId)
         return {
           ...noticeHasDelete._doc,
-          _id: noticeHasDelete.id,
+          _id: noticeHasDelete._id,
         }
       } catch (error) {
         throw error

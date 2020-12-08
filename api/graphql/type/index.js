@@ -7,6 +7,7 @@ const DisType = require("./dishType")
 const OrderType = require("./order")
 const NotificationOrderType = require("./notificationOrder.type")
 const DeviceType = require("./device.type")
+const ReviewType = require("./review.type")
 
 const types = [
     FoodType,
@@ -16,6 +17,7 @@ const types = [
     DisType,
     OrderType,
     NotificationOrderType,
-    DeviceType
+    DeviceType,
+    ReviewType
 ]
 module.exports = mergeTypeDefs(types)

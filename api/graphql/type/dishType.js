@@ -2,7 +2,7 @@ module.exports = `
     type DishType {
         _id: ID!
         name: String!
-        food: [Food!]
+        foods: [Food!]
         restaurant: ID!
     }
 
@@ -17,6 +17,5 @@ module.exports = `
     input dishTypeInput {
         restaurant: ID!
         name: String!
-        food: ID
     }
 `

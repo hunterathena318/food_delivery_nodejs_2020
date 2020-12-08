@@ -4,12 +4,16 @@ module.exports =  `
         name: String!,
         is_active: Boolean!
         img_uri: String,
-        price: Float,
+        price: Price,
         restaurant: Restaurant!,
-        dishType: DishType!
-        
+        dishType: DishType!,
+        createdAt: String!
+        updatedAt: String!
     }
-    
+    type Price{
+        unit: String!
+        value: Float!
+      }
     type Query {
         foods: [Food],
         foodsByRestaurant(restaurantId: ID!): [Food]!
@@ -29,9 +33,14 @@ module.exports =  `
         name: String!
     }
 
+    input PriceInput{
+        unit: String!
+        value: Float!
+    }
+
     input FoodInput{
         name: String!,
-        price: String!,
+        price: PriceInput,
         is_active: Boolean
         img_uri: String
         restaurant: ID!

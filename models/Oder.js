@@ -17,7 +17,7 @@ const OderSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
-  delivery_positon: {
+  delivery_position: {
     address: {
       type: String,
       require: true
@@ -41,9 +41,25 @@ const OderSchema = new Schema({
   review: {
     star: Number,
     description: String,
+  },
+  subtotal: {
+    type: Number,
+    required: true
+  },
+  total: {
+    type: Number,
+    required: true
+  },
+  payment:{
+    paymentType:{
+      type: String,
+      required:true
+    },
+    detail:{
+      type: String,
+      required:true
+    }
   }
-  
-
-})
+}, {timestamps: true})
 
 module.exports = mongoose.model("Oder", OderSchema);

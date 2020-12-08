@@ -6,7 +6,7 @@ const SchemaDishType = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Restaurant"
     },
-    food: [
+    foods: [
         {
             type: Schema.Types.ObjectId,
             ref: "Food"
@@ -17,5 +17,7 @@ const SchemaDishType = new Schema({
         required: true
     }
 })
-
+SchemaDishType.index({
+    name:'text'
+  })
 module.exports = mongoose.model("DishType", SchemaDishType)

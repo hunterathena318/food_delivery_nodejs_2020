@@ -1,46 +1,72 @@
 module.exports = `
     type User {
-        id: ID!,
-        email: String!,
-        fName: String!,
-        lName: String!,
-        phone: String!,
-        orders: [Order!],
-        numNotifications: Int!,
+        _id: ID!
+        fName: String!
+        lName: String!
+        password: String
+        email: String!
         position: [Position!]
+        payment: [Payment!]!
+        phone: String!
+        likes: [Food!]
+        orders: [Order!]
+        bookmarks: [Restaurant!]
+        device: [Device!]
+        numNotifications: Int!
     }
     type Authdata {
-        id: ID!,
+        userId: ID!,
         token: String!,
         refreshToken: String!
+    }
+    type Payment{
+        _id: ID!
+        paymentType: String!
+        detail: String!
     }
     type Query {
         users: [User!]
         userById(id: ID!): User!
     }
     type Mutation {
-        createUser(userInput: userInput!): User!
+        createUser(userInput: UserInput!): User!
         login(loginInput: LoginInput!): Authdata!
+        updateUser(userId: ID!, updateValue: UpdateUserInput!): User!
     }
     type Position{
         _id: ID!
         address: String!
         lat: Float!
         long: Float!
-      }
+    }
+    type PositionInput {
+        address: String!
+        lat: Float!
+        long: Float!
+    }
 
-
-    input userInput {
-        email: String!,
-        username: String!,
-        phone: String!,
-        password: String!,
-        password_confirm: String!
+    input UpdateUserInput{
+        fName: String
+        lName: String
+        numNotification: Int
+        position: PositionInput
+        email: String
+    }
+    input UserInput {
+        fName: String!
+        lName: String!
+        phone: String!
+        email: String!
+        password: String!
+        confirmPassword: String!
+        position: PositionInput!
     }
 
     input LoginInput {
-        email: String!,
+        email: String!
         password: String!
+        uniqueId: String!
+        fcmTokenUser: String!
     }
      
 `

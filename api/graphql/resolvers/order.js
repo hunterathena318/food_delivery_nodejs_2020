@@ -2,6 +2,9 @@ const Order = require("../../../models/Oder")
 const User = require("../../../models/User")
 const Restaurant = require("../../../models/Restaurant")
 const NotificationOder = require("../../../models/notificationOder")
+const Device = require("../../../models/device.model")
+const Food = require("../../../models/Food")
+const API = require("../../../services/notification")
 
 module.exports = {
     Query: {
@@ -51,7 +54,7 @@ module.exports = {
                 throw error
             }
         },
-        orderById: async (_, {orderId }) => {
+        orderById: async (_, { orderId }) => {
             try {
                 const order = await Order.findById(orderId)
                     .populate('items.food')
@@ -59,7 +62,8 @@ module.exports = {
                     .populate('restaurant')
                     .exec()
                 return {
-                    ...order._doc
+                    ...order._doc,
+                    _id: order._id
                 }
             } catch (error) {
                 throw error
@@ -67,15 +71,18 @@ module.exports = {
         }
     },
     Mutation: {
-        createOrders: async (_, { inputOrder }) => {
+        createOrder: async (_, { orderInput }) => {
             try {
-                let { userId } = inputOrder
-                const userOrder = await User.findById(userId)
-                if(!userOrder) throw new Error("Not found user for ordrer")
                 const newOrder = new Order({
-                    ...inputOrder,
+                    ...orderInput,
+                    subtotal: +orderInput.subtotal,
+                    total: +orderInput.total,
                 })
                 await newOrder.save()
+                const userOrder = await User.findById(newOrder.user)
+                if(!userOrder) throw new Error("Not found user for ordrer")
+                userOrder.orders.push(newOrder)
+                await userOrder.save()
                 const resofOrder = await Restaurant.findByIdAndUpdate(
                     newOrder.restaurant, {$inc: {numOrders: 1}}
                 )
@@ -85,11 +92,27 @@ module.exports = {
                     receiver: resofOrder._doc.merchant
                 })
                 await newNotice.save()
-                await User.findByIdAndUpdate({_id: userId}, {
-                    $push: {
-                        "orders": newOrder._id
-                    }
-                })
+                const devices = await Device.find({ merchant: resofOrder.merchant})
+                for (const el of devices) {
+                    let { fcmTokenMerchant } = el;
+                    console.log(fcmTokenMerchant);
+                    API.sendNotification(
+                      { ...newNotice._doc, orderId: newOrder._id },
+                      'rest',
+                      fcmTokenMerchant,
+                      resofOrder._id,
+                      res => console.log(res),
+                      err => { throw err });
+                };
+                // await User.findByIdAndUpdate({_id: userId}, {
+                //     $push: {
+                //         "orders": newOrder._id
+                //     }
+                // })
+                const foodArr = orderInput.items.map(item => {
+                    return item.food
+                  });
+                await Food.updateMany({ _id: { $in: foodArr } }, { $inc: { total_order: 1 } })
                 return {
                     ...newOrder._doc,
                     _id: newOrder._id
@@ -122,5 +145,18 @@ module.exports = {
             }
         }
         
+    },
+    Item: {
+        food: async ({ food }) => {
+          return await Food.findById(food);
+        }
+    },
+    Order: {
+        restaurant: async ({ restaurant }) => {
+            return await Restaurant.findById(restaurant).exec()
+        },
+        user: async ({ user }) => {
+            return await User.findById(user);
+        }
     }
 }

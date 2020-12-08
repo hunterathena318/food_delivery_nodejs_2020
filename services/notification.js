@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { CUST_FCM_KEY, MERC_FCM_KEY } from './constants';
+const axios = require('axios')
+const { CUST_FCM_KEY, MERC_FCM_KEY } = require('./constants')
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 const sendNotification = (content, receiver, fcmToken, restaurant, resCb, errCb) => {
@@ -34,6 +34,6 @@ const sendNotification = (content, receiver, fcmToken, restaurant, resCb, errCb)
   }).then(resCb).catch(errCb)
 }
 
-export default {
+module.exports = {
   sendNotification
 };

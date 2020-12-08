@@ -1,5 +1,6 @@
 const DishType = require("../../../models/dishType")
 const Restaurant = require("../../../models/Restaurant")
+const Food = require("../../../models/Food")
 
 module.exports = {
     Query: {
@@ -17,26 +18,34 @@ module.exports = {
             return menu.map(item => {
               return {
                 ...item._doc,
-                _id: item.id
-              }
+                _id: item._id              }
             })
           }
     },
     Mutation: {
-        createDishType: async (_,{dishTypeInput}) => {
-            const restaurant = await Restaurant.findById(dishTypeInput.restaurant).exec()
-            if(!restaurant) throw new Error("Restaurant is not exist")
-            const newDishType = new DishType({
-                ...dishTypeInput
-            })
-
-            await newDishType.save()
-            restaurant.menuInfo.push(newDishType)
-            restaurant.save()
-            return {
-                ...newDishType._doc,
-                id: newDishType._id
+        createDishType: async (_,{ dishTypeInput }) => {
+            try {
+                const restaurant = await Restaurant.findById(dishTypeInput.restaurant).exec()
+                if(!restaurant) throw new Error("Restaurant is not exist")
+                const newDishType = new DishType({
+                    name: dishTypeInput.name,
+                    restaurant: dishTypeInput.restaurant
+                })
+                await newDishType.save()
+                restaurant.menu_info.push(newDishType)
+                await restaurant.save()
+                return {
+                    ...newDishType._doc,
+                    _id: newDishType._id
+                }
+            } catch (error) {
+                throw error
             }
+        }
+    },
+    DishType: {
+        foods: async ({ _id }) => {
+          return await Food.find({ dishType: _id });
         }
     }
 }

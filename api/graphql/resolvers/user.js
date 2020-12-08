@@ -1,4 +1,6 @@
 const User = require("../../../models/User")
+const Device = require("../../../models/device.model")
+const Order = require("../../../models/Oder")
 const bcrypt = require("bcrypt")
 const { generateToken } = require("../../../common/middleware/auth")
 const jwt = require("jsonwebtoken")
@@ -34,13 +36,13 @@ module.exports = {
     Mutation: {
       createUser: async(_,{userInput}) => {
        try {
-          const { email, password, password_confirm } = userInput
+          const { email, password, confirmPassword } = userInput
           let hashpass = ''
           const ex_user = await User.findOne({email: email}).exec()
           if(ex_user) {
             throw new Error("Already user")
           }
-          if (password === password_confirm) {
+          if (password === confirmPassword) {
             hashpass = await bcrypt.hash(password, 10)
           }  else {
             throw new Error("Password not equal password_confirm")
@@ -48,7 +50,7 @@ module.exports = {
           const newUser = new User({
             ...userInput,
             password: hashpass,
-            password_confirm: hashpass,
+            confirmPassword: hashpass,
             role: 'customer'
           })
           await newUser.save()
@@ -59,20 +61,44 @@ module.exports = {
       },
       login: async (_, {loginInput}) => {
         try {
+          const { uniqueId, fcmTokenUser } = loginInput
           const user = await User.findOne({email: loginInput.email}).exec()
           const result = await bcrypt.compare(loginInput.password, user.password )
-          if(result) {
-            const token = generateToken(user)
-              return {
-                id: user._id,
-                token: token
-              }
-          } else {
-            throw new Error("Password is not correcr")
+          if(!result) throw new Error("Password is not correct")
+          const token = generateToken(user)
+          console.log(user, "userrrrrr")
+          await Device.findOneAndUpdate(
+            { uniqueId },
+            { user, fcmTokenUser },
+            { new: true, upsert: true }
+          )
+          return {
+            userId: user._id,
+            fName: user.fName,
+            lName: user.lName,
+            token: token,
+            tokenExpiration: 2
           }
         } catch (error) {
           throw error
         }
+      },
+      updateUser: async (_,{ userId, updateValue }) => {
+        try {
+          const user = await User.findByIdAndUpdate(userId, { $set: { ...updateValue } }, { new: true })
+          return {
+            ...user._doc,
+            _id: user._id
+          }
+        } catch (error) {
+          throw error
+        }
+
+      }
+    },
+    User: {
+      orders: async ({ _id }) => {
+        return await Order.find({ user: _id })
       }
     }
 }

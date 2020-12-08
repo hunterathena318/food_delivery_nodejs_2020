@@ -1,7 +1,7 @@
 // const Restaurant = require('../../models/restaurant.model')
 // const Food = require('../../models/food.model')
 // const DishType = require('../../models/dishType.model')
-const Device = require('../../models/device.model')
+const Device = require('../../../models/device.model')
 
 module.exports = {
   Mutation: {
@@ -9,6 +9,7 @@ module.exports = {
       try {
         const deviceHasUpdated = await Device
           .findOneAndUpdate({ uniqueId }, { $set: { fcmTokenUser: '', user: null } }, { new: true });
+        console.log(deviceHasUpdated, "deviceHasUpdated")  
         return {
           ...deviceHasUpdated._doc,
           _id: deviceHasUpdated._id

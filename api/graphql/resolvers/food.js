@@ -5,16 +5,19 @@ module.exports =  {
     Mutation: {
         createFood: async (_,{foodInput}) => {
             try {
-                let { dishType } = foodInput
                 const food = await Food.findOne({name: foodInput.name, restaurant: foodInput.restaurant})
                 if(food) throw new Error("This food already existss")
                 const newFood = new Food({
                     ...foodInput,
+                    price: {
+                        ...foodInput.price,
+                        value: +foodInput.price.value
+                      }
                 })
                 await newFood.save()
-                await DishType.findOneAndUpdate({_id: dishType}, {
+                await DishType.findOneAndUpdate({_id: foodInput.dishType}, {
                     $push: {
-                        "food": newFood
+                        "foods": newFood
                     }
                 })
 

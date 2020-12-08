@@ -5,6 +5,12 @@ const UserSchema = new mongose.Schema({
         type: String,
         required: true,
     },
+    bookmarks: [
+      {
+        type: mongose.Schema.Types.ObjectId,
+        ref: 'Restaurant'
+      }
+    ],
     fName: {
         type: String, 
         required: true, 
@@ -21,7 +27,7 @@ const UserSchema = new mongose.Schema({
         type: String,
         required: true,
     },
-    password_confirm : {
+    confirmPassword : {
         type: String,
         required: true,
     },
@@ -54,7 +60,27 @@ const UserSchema = new mongose.Schema({
     numNotifications: {
         type: Number,
         default: 0
-    }
-})
+    },
+    payment: {
+      type: [
+        {
+          paymentType: {
+            type: String,
+            required: true
+          },
+          detail: {
+            type: String,
+            required: true
+          }
+        }
+      ],
+      default: [
+        {
+          paymentType: 'cash',
+          detail: 'Payment on delivery'
+        }
+      ]
+    },
+}, {timestamps: true})
 
 module.exports = mongose.model("User", UserSchema)
